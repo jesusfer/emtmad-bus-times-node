@@ -1,6 +1,18 @@
 var request = require('request');
+
+// Probably not the best way to share vars between functions in module scope. Please let me know the right way.
+var globalIdClient = '';
+var globalPasskey = '';
+
+// API variables
+var getIncomingBusesToStopUrl = 'https://openbus.emtmadrid.es/emt-proxy-server/last/geo/GetArriveStop.php';
+
 module.exports = {
-	getIncomingBusesToStop : function (idStop, idClient, passKey, callback ){
+	initAPICredentials : function (idClient, passKey ){
+		globalIdClient = idClient;
+		globalPasskey = passKey;
+	},
+	getIncomingBusesToStop : function (idStop, callback ){
 
 		// Response JSON, to be populated later
 		var response = {
@@ -11,15 +23,15 @@ module.exports = {
 		var formData = {
 			"cultureInfo": "ES",
 			"idStop": idStop,
-			"idClient": idClient,
-			"passKey": passKey
+			"idClient": globalIdClient,
+			"passKey": globalPasskey
 		};
 
 		// Perform API call
 		request.post({
-			url:'https://openbus.emtmadrid.es/emt-proxy-server/last/geo/GetArriveStop.php', 
+			url: getIncomingBusesToStopUrl, 
 			form: formData,
-			strictSSL: false
+			strictSSL: false // The API certificate looks self signed
 
 		}, function (err, httpResponse, body) {
 			if ( err ) {
@@ -29,7 +41,7 @@ module.exports = {
 			}else{
 				console.log('REST call OK');
 				response.status = 200;
-				response.arrives = JSON.parse(body);
+				response.arrives = (JSON.parse(body)).arrives;
 			}
 
 			if (typeof callback === "function") {
