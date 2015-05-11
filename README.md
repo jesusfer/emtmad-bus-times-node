@@ -76,4 +76,8 @@ The SSL certificate in the endpoint ( https://openbus.emtmadrid.es ) is self-sig
 
 ## Development
 
-Do you want to contribute? Great! Pull requests are more than welcome. 
+Do you want to contribute? Great! Pull requests are more than welcome.
+
+## Bower version
+
+Check https://github.com/alvaroreig/emtmad-bus-times-bw
