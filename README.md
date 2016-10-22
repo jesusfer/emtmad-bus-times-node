@@ -1,6 +1,8 @@
-# emtmad-bus-times-node
+# node-emtmad-bus-promise
 
-Nodejs library to access services from the public API of the Public Transport Authority of Madrid, Spain (EMT)
+Node.js module to access services from the public API of the Public Transport Authority of Madrid, Spain (EMT).
+
+This module is a fork of https://github.com/alvaroreig/emtmad-bus-times-node that returns Promise objects instead of doing sync calls to the EMT API.
 
 ## API Access
 
@@ -8,76 +10,88 @@ Request access to the API at http://opendata.emtmadrid.es/Formulario
 
 ## Installation
 
-emtmad-bus-times-node is packaged using NPM ( https://www.npmjs.com/ ). Just require the package inside your code:
+node-emtmad-bus-promise is packaged using NPM. Just require the package inside your code:
 
-```sh
-var emtmadApi = require('emtmad-bus-times-node');
+```js
+var EMTAPI = require('node-emtmad-bus-promise');
 ```
 
-## Init API
+## Initializing the API
 
-Call the init function with your credentials:
+The first thing you need to do before using the API is calling initAPICredentials with your credentials:
 
-```sh
-emtmadApi.initAPICredentials('YOUR_API_ID','YOUR_API_PASSKEY');
+```js
+EMTAPI.initAPICredentials('YOUR_API_ID','YOUR_API_PASSKEY');
 ```
 
 ## Usage: get incoming buses to a given bus stop
 
-Once the client is initialized, you just need to call the getIncomingBuses(busStopNumber, your_callback_function(jsonOutput) and access the JSON file:
+Call the function getIncomingBusesToStop(busStopNumber) and a Promise will be returned that fulfills to an array of estimations:
 
-```sh
-	var busStopNumber = '1924';
+```js
+    let stop = {
+        Id: 3041
+    }
 
-	getIncomingBusesToStop( busStopNumber, function(output){
-        if (output.status == 200)
-            console.log(output.arrives);
-        else if (output.status == 400)
-            console.log(output.error);
-        else
-            console.log("unknown error");
-    });
+    EMTAPI.getIncomingBusesToStop(stop.Id)
+        .then(function (arriving) {
+            stop.arriving = arriving;
+            resolve(stop);
+        })
+        .catch(function (error) {
+            resolve(`Error: ${error}`);
+        });
+
 ```
 
-If the call to the API is successful, the returned JSON will be like this:
+The array of estimations is built with Bus objects that represent an incoming bus to the specified bus stop. The most relevant attributes for each bus are:
 
-```sh
+```js
 {
-    "status":200,
-    "arrives":[{bus0},{bus1}....{busN}]
+    "lineId": "32", // The line of the bus
+    "busDistance": 9, // In meters
+    "busTimeLeft": 0 // In seconds
 }
 ```
 
-Where every **{busN}** object represents an incoming bus to the specified bus stop. The most relevant attributes for each bus are:
+## Usage: get stops close to a location
 
-```sh
+Call the function getStopsFromLocation(location, radius) and a Promise will be returned that fulfills to an array of stops:
+
+```js
+    let location = {
+        latitude: -3.7324823992585,
+        longitude: 40.377653538528
+    }
+    let searchRadius = 250;
+
+    EMTAPI.getStopsFromLocation(location, searchRadius)
+        .then(function (stops) {
+            // do something
+        })
+        .catch(function (error) {
+            resolve(`Error: ${error}`);
+        });
+
+```
+
+The array of stops is built with Stop objects that look like this:
+
+```js
 {
-    "lineId": "32", # The line of the bus
-    "busDistance": 9, # In meters
-    "busTimeLeft": 0 # In seconds
+    stopId: '2443',
+    name: 'AV.ABRANTES-PZA.LASMENINAS',
+    postalAddress: 'Av.deAbrantes, 106',
+    longitude: -3.7324823992585,
+    latitude: 40.377653538528,
+    line: [Line Object]
 }
 ```
 
+## Further reading
 
-If the call to the API wasn't successful, the returned JSON will be like this:
-
-```sh
-{
-    "status":400,
-    "error": e
-}
-```
-
-## Troubleshooting
-
-### CORS
-
-The SSL certificate in the endpoint ( https://openbus.emtmadrid.es ) is self-signed, so you will need to add it to your browser's truststore.
+The objects returned in this API are exactly the same as the EMT API. A comprehensive documentation of the objects returned by the EMT API can be downloaded in the following link: http://opendata.emtmadrid.es/Documentos/Opendata-v-1-12.aspx
 
 ## Development
 
 Do you want to contribute? Great! Pull requests are more than welcome.
-
-## Bower version
-
-Check https://github.com/alvaroreig/emtmad-bus-times-bw

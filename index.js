@@ -37,7 +37,6 @@ module.exports = {
                 /* 'content-type': 'application/x-www-form-urlencoded' */ // Set automatically
             },
             json: true // Automatically stringifies the body to JSON
-            // TODO is there an option for not checking the cert?
         };
 
         return rp(options).then(function (body) {
