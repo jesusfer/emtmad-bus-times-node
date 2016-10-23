@@ -7,19 +7,14 @@ const debug = require('debug')('emtmad-bus-times-promise');
 const _ = require('lodash');
 const P = require('bluebird');
 
-// Probably not the best way to share vars between functions in module scope. Please let me know the right way.
-var globalIdClient = '';
-var globalPasskey = '';
+var EMT_ID_CLIENT = process.env.EMT_APP_ID;
+var EMT_PASSKEY = process.env.EMT_PASSKEY;
 
 // API variables
 var getIncomingBusesToStopUrl = 'https://openbus.emtmadrid.es/emt-proxy-server/last/geo/GetArriveStop.php';
 var getStopsFromLocationUrl = 'https://openbus.emtmadrid.es/emt-proxy-server/last/geo/GetStopsFromXY.php';
 
 module.exports = {
-    initAPICredentials: function (idClient, passKey) {
-        globalIdClient = idClient;
-        globalPasskey = passKey;
-    },
     /*
     * Given the ID of a bus stop, get the buses arriving to it.
     * Returns a Promise object that fulfills to an array of arriving buses.
@@ -29,8 +24,8 @@ module.exports = {
         var formData = {
             cultureInfo: "ES",
             idStop: idStop,
-            idClient: globalIdClient,
-            passKey: globalPasskey
+            idClient: EMT_ID_CLIENT,
+            passKey: EMT_PASSKEY
         };
         var options = {
             method: 'POST',
@@ -59,13 +54,12 @@ module.exports = {
         }
         var formData = {
             cultureInfo: "ES",
-            idClient: globalIdClient,
-            passKey: globalPasskey,
+            idClient: EMT_ID_CLIENT,
+            passKey: EMT_PASSKEY,
             latitude: location.latitude,
             longitude: location.longitude,
             Radius: radius
         };
-
         var options = {
             method: 'POST',
             uri: getStopsFromLocationUrl,
