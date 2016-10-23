@@ -11,8 +11,12 @@ var EMT_ID_CLIENT = process.env.EMT_APP_ID;
 var EMT_PASSKEY = process.env.EMT_PASSKEY;
 
 // API variables
-var getIncomingBusesToStopUrl = 'https://openbus.emtmadrid.es/emt-proxy-server/last/geo/GetArriveStop.php';
-var getStopsFromLocationUrl = 'https://openbus.emtmadrid.es/emt-proxy-server/last/geo/GetStopsFromXY.php';
+const baseUrl = 'https://openbus.emtmadrid.es/emt-proxy-server/last';
+var getIncomingBusesToStopUrl = baseUrl + '/geo/GetArriveStop.php';
+var getStopsFromLocationUrl = baseUrl + '/geo/GetStopsFromXY.php';
+var getStopsLineUrl = baseUrl + '/geo/GetStopsLine.php';
+
+var lineDirectionCache = {};
 
 module.exports = {
     /*
@@ -72,6 +76,39 @@ module.exports = {
 
         return rp(options).then(function (body) {
             return _.get(body, 'stop', []);
+        });
+    },
+    /*
+    * Given a location object and a search radius, find the stops closer to the user.
+    * Returns a Promise object that fulfills to an array of Stops.
+    */
+    getStopsLine: function (line, direction) {
+        debug(`Getting stops for line ${line} and direction ${direction}`);
+        const cacheKey = `${line}/${direction}`;
+        if (_.has(lineDirectionCache, cacheKey)) {
+            debug('Results are in the cache');
+            return Promise.resolve(_.get(lineDirectionCache, cacheKey, {}));
+        }
+
+        var formData = {
+            cultureInfo: "ES",
+            idClient: EMT_ID_CLIENT,
+            passKey: EMT_PASSKEY,
+            line: line,
+            direction: direction
+        };
+        var options = {
+            method: 'POST',
+            uri: getStopsLineUrl,
+            form: formData,
+            headers: {
+                /* 'content-type': 'application/x-www-form-urlencoded' */ // Set automatically
+            },
+            json: true // Automatically stringifies the body to JSON
+        };
+        return rp(options).then(function (body) {
+            _.set(lineDirectionCache, cacheKey, body);
+            return body;
         });
     }
 };
