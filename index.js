@@ -3,7 +3,7 @@
 'use strict';
 
 const rp = require('request-promise');
-const debug = require('debug')('emtmad-bus-times-promise');
+const debug = require('debug')('node-emtmad-bus-promise');
 const _ = require('lodash');
 const P = require('bluebird');
 
