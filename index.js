@@ -20,9 +20,12 @@ module.exports = {
         globalIdClient = idClient;
         globalPasskey = passKey;
     },
+    /*
+    * Given the ID of a bus stop, get the buses arriving to it.
+    * Returns a Promise object that fulfills to an array of arriving buses.
+    */
     getIncomingBusesToStop: function (idStop) {
         debug(`Getting incoming buses at stop ${idStop}`);
-        // Entry parameters
         var formData = {
             cultureInfo: "ES",
             idStop: idStop,
@@ -43,6 +46,10 @@ module.exports = {
             return _.get(body, 'arrives', []);
         });
     },
+    /*
+    * Given a location object and a search radius, find the stops closer to the user.
+    * Returns a Promise object that fulfills to an array of Stops.
+    */
     getStopsFromLocation: function (location, radius) {
         debug(`Getting stops in a radius of ${radius}m near ${location.latitude},${location.longitude}`);
         if ((location.latitude === 0 && location.longitude === 0) || radius < 1) {
@@ -50,7 +57,6 @@ module.exports = {
             debug('Empty location. Not calling the EMT API');
             return P.resolve([]);
         }
-        // Entry parameters
         var formData = {
             cultureInfo: "ES",
             idClient: globalIdClient,
