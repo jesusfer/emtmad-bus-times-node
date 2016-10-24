@@ -6,7 +6,7 @@ This module is a fork of https://github.com/alvaroreig/emtmad-bus-times-node tha
 
 ## API Access
 
-Request access to the API at http://opendata.emtmadrid.es/Formulario
+Request access to the API at http://opendata.emtmadrid.es/Formulario. You will be given a Client ID and a Passkey.
 
 ## Installation
 
@@ -18,10 +18,11 @@ var EMTAPI = require('node-emtmad-bus-promise');
 
 ## Initializing the API
 
-The first thing you need to do before using the API is calling initAPICredentials with your credentials:
+In order to use this API you need to set two environment variables with your Client ID and Passkey. These variables need to be set before using require on the module.
 
-```js
-EMTAPI.initAPICredentials('YOUR_API_ID','YOUR_API_PASSKEY');
+```sh
+EMT_APP_ID = <your client id>
+EMT_PASSKEY = <your passkey>
 ```
 
 ## Usage: get incoming buses to a given bus stop
@@ -85,6 +86,37 @@ The array of stops is built with Stop objects that look like this:
     longitude: -3.7324823992585,
     latitude: 40.377653538528,
     line: [Line Object]
+}
+```
+
+## Usage: get stops of a line
+
+Call the function getStopsLine(line, direction) and a Promise will be returned that fulfills to the whole of object returned by the EMT API. Since this query is pretty time consuming, the results are cached per line/direction combination to speed up things.
+
+```js
+    let line = "118"; // line should be the lineId and not the label of the line
+    let direction = 1; // lines have two directions represented either by: 1 or 2
+
+    EMTAPI.getStopsLine(line, direction)
+        .then(function (results) {
+            // do something
+        })
+        .catch(function (error) {
+            resolve(`Error: ${error}`);
+        });
+
+```
+
+The object is described in the EMT API and looks like this:
+
+```js
+{
+    lineId: 516, // Line Id
+    label: 'N16', // Label for this line
+    destination: 'TEXT', // Destination of line
+    incidents: 0 // 0: No incidents, 1: Incidents
+    stop: [] // List of Stop
+    line: [] // List of Line
 }
 ```
 
