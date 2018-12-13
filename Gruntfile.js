@@ -33,6 +33,6 @@ module.exports = function (grunt) {
         }
     });
 
-    grunt.registerTask('test', ['mochaTest']);
+    grunt.registerTask('test', ['mocha_istanbul']);
     grunt.registerTask('coverage', ['mocha_istanbul']);
 };
