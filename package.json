@@ -2,7 +2,7 @@
   "name": "node-emtmad-bus-promise",
   "version": "1.1.0",
   "description": "Nodejs library to access services from the public API of the Public Transport Authority of Madrid, Spain (EMT) with a Promises twist",
-  "main": "index.js",
+  "main": "lib/emtmad-bus-promise.js",
   "scripts": {
     "test": "grunt test"
   },
@@ -17,9 +17,18 @@
   },
   "dependencies": {
     "bluebird": "^3.4.6",
-    "debug": "^2.2.0",
+    "debug": "^4.1.0",
     "lodash": "^4.16.4",
     "request": "^2.75.0",
     "request-promise": "^4.1.1"
+  },
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "chai-as-promised": "^7.1.1",
+    "grunt": "^1.0.3",
+    "grunt-mocha-istanbul": "^5.0.2",
+    "grunt-mocha-test": "^0.13.3",
+    "istanbul": "^0.4.5",
+    "mocha": "^5.2.0"
   }
 }
