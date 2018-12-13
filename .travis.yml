@@ -1,6 +1,8 @@
 language: node_js
 node_js:
  - "node"
+install:
+  - npm install -g codecov
 script:
   - grunt coverage
-  - .\node_modules\.bin\codecov
+  - codecov
