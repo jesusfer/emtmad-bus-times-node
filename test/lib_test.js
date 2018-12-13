@@ -1,20 +1,24 @@
 'use strict';
 
+var _ = require('lodash');
 var chai = require('chai');
 var chaiAsPromised = require('chai-as-promised');
 chai.use(chaiAsPromised).should();
 var bus;
 
+var TIMEOUT = _.get(process.env, 'TEST_TIMEOUT', 5000);
 var EMT_ID_CLIENT = process.env.EMT_APP_ID;
 var EMT_PASSKEY = process.env.EMT_PASSKEY;
 
 describe('API authentication errors', function () {
+    this.timeout(TIMEOUT);
+    
     before(function () {
         process.env['EMT_APP_ID'] = '';
         process.env['EMT_PASSKEY'] = '';
         bus = require('../lib/emtmad-bus-promise');
     });
-
+    
     after(function () {
         process.env['EMT_APP_ID'] = EMT_ID_CLIENT;
         process.env['EMT_PASSKEY'] = EMT_PASSKEY;
@@ -31,6 +35,7 @@ describe('API authentication errors', function () {
 });
 
 describe('emtmad-bus-promise', function () {
+    this.timeout(TIMEOUT);
     describe('getIncomingBusesToStop', function () {
         // Stop 69 always should have a bus coming
         // Stop 3729 only has buses during the night
