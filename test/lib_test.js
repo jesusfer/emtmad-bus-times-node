@@ -34,11 +34,16 @@ describe('emtmad-bus-promise', function () {
     describe('getIncomingBusesToStop', function () {
         // Stop 69 always should have a bus coming
         // Stop 3729 only has buses during the night
+        // Stop 5376 only has buses during the day
         it('should return a non empty array', function () {
             return bus.getIncomingBusesToStop(69).should.eventually.have.length.greaterThan(0);
         });
-        it('should return an empty array', function () {
-            return bus.getIncomingBusesToStop(3729).should.eventually.have.lengthOf(0);
+        it('should return an empty array', async function () {
+            // This is ugly and there may be other cases
+            var day = await bus.getIncomingBusesToStop(5376);
+            var night = await bus.getIncomingBusesToStop(3729);
+            var b = (day.length == 0 && night.length > 0) || (day.length > 0 && night.length == 0);
+            b.should.be.true;
         });
         it('should return Error if non existent', function () {
             return bus.getIncomingBusesToStop(9999999).should.eventually.be.rejectedWith(Error);
