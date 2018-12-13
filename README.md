@@ -1,5 +1,11 @@
 # node-emtmad-bus-promise
 
+[![NPM version][npm-image]][npm-url]
+[![Build Status][travis-image]][travis-url]
+[![codecov](https://codecov.io/gh/jesusfer/node-emtmad-bus-promise/branch/master/graph/badge.svg)](https://codecov.io/gh/jesusfer/node-emtmad-bus-promise)
+[![Dependency Status][depstat-image]][depstat-url]
+[![Dev Dependency Status][devdepstat-image]][devdepstat-url]
+
 Node.js module to access services from the public API of the Public Transport Authority of Madrid, Spain (EMT).
 
 This module is a fork of https://github.com/alvaroreig/emtmad-bus-times-node that returns Promise objects instead of doing sync calls to the EMT API.
@@ -127,3 +133,15 @@ The objects returned in this API are exactly the same as the EMT API. A comprehe
 ## Development
 
 Do you want to contribute? Great! Pull requests are more than welcome.
+
+[travis-image]: https://travis-ci.org/jesusfer/node-emtmad-bus-promise.svg?branch=master
+[travis-url]: https://travis-ci.org/jesusfer/node-emtmad-bus-promise
+
+[npm-url]: https://npmjs.org/package/node-emtmad-bus-promise
+[npm-image]: https://img.shields.io/npm/v/node-emtmad-bus-promise.svg
+
+[depstat-url]: https://david-dm.org/jesusfer/node-emtmad-bus-promise
+[depstat-image]: https://img.shields.io/david/jesusfer/node-emtmad-bus-promise/master.svg
+
+[devdepstat-url]: https://david-dm.org/jesusfer/node-emtmad-bus-promise#info=devDependencies
+[devdepstat-image]: https://img.shields.io/david/dev/jesusfer/node-emtmad-bus-promise/master.svg
