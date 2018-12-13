@@ -1,6 +1,6 @@
 {
   "name": "node-emtmad-bus-promise",
-  "version": "1.1.0",
+  "version": "2.0.0",
   "description": "Nodejs library to access services from the public API of the Public Transport Authority of Madrid, Spain (EMT) with a Promises twist",
   "main": "lib/emtmad-bus-promise.js",
   "scripts": {
