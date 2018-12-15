@@ -6,7 +6,7 @@ var chaiAsPromised = require('chai-as-promised');
 chai.use(chaiAsPromised).should();
 var bus;
 
-var TIMEOUT = _.get(process.env, 'TEST_TIMEOUT', 5000);
+var TIMEOUT = _.get(process.env, 'TEST_TIMEOUT', 10000);
 var EMT_ID_CLIENT = process.env.EMT_APP_ID;
 var EMT_PASSKEY = process.env.EMT_PASSKEY;
 
@@ -85,16 +85,16 @@ describe('emtmad-bus-promise', function () {
             return bus.getStopsLine(21).should.eventually.have.property('label', '21');
         });
         it('should return the details of the requested line and direction', function () {
-            return bus.getStopsLine(21, "A").should.eventually.have.property('label', '21');
+            return bus.getStopsLine(21, "1").should.eventually.have.property('label', '21');
         });
         it('should return Error if non existent', function () {
             return bus.getStopsLine(1000).should.eventually.be.rejectedWith(Error);
         });
         it('should return Error if non existent (with direction)', function () {
-            return bus.getStopsLine(1000, "A").should.eventually.be.rejectedWith(Error);
+            return bus.getStopsLine(1000, "1").should.eventually.be.rejectedWith(Error);
         });
         it('should return Error when wrong direction ', function () {
-            return bus.getStopsLine(21, "C").should.eventually.be.rejectedWith(Error);
+            return bus.getStopsLine(21, "3").should.eventually.be.rejectedWith(Error);
         });
         it('should return a cached response', function () {
             // This is just for coverage reports. The returned value doesn't include cache info.
