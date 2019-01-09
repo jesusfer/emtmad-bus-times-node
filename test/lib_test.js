@@ -50,8 +50,8 @@ describe('emtmad-bus-promise', function () {
             var b = (day.length == 0 && night.length > 0) || (day.length > 0 && night.length == 0);
             b.should.be.true;
         });
-        it('should return Error if non existent', function () {
-            return bus.getIncomingBusesToStop(9999999).should.eventually.be.rejectedWith(Error);
+        it('should return empty if non existent', function () {
+            return bus.getIncomingBusesToStop(9999999).should.eventually.have.lengthOf(0);
         });
         it('should return Error if stop is invalid', function () {
             return bus.getIncomingBusesToStop('a').should.eventually.be.rejectedWith(Error);
