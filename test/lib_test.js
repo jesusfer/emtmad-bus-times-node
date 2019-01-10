@@ -11,13 +11,13 @@ var EMT_ID_CLIENT = process.env.EMT_APP_ID;
 var EMT_PASSKEY = process.env.EMT_PASSKEY;
 describe('API authentication errors', function () {
     this.timeout(TIMEOUT);
-    
+
     before(function () {
         process.env['EMT_APP_ID'] = '';
         process.env['EMT_PASSKEY'] = '';
         bus = require('../lib/emtmad-bus-promise');
     });
-    
+
     after(function () {
         process.env['EMT_APP_ID'] = EMT_ID_CLIENT;
         process.env['EMT_PASSKEY'] = EMT_PASSKEY;
@@ -35,27 +35,77 @@ describe('API authentication errors', function () {
     });
 });
 
-describe('emtmad-bus-promise', function () {
+describe('Library functions', function () {
     this.timeout(TIMEOUT);
     describe('getIncomingBusesToStop', function () {
         // Stop 69 always should have a bus coming
         // Stop 3729 only has buses during the night
         // Stop 5376 only has buses during the day
-        it('should return a non empty array', function () {
-            return bus.getIncomingBusesToStop(69).should.eventually.have.length.greaterThan(0);
+        describe('With stop existance checking', () => {
+            var check = Boolean(process.env['EMTAPI_CHECK']);
+            before(function () {
+                var name = require.resolve('../lib/emtmad-bus-promise');
+                delete require.cache[name];
+                name = require.resolve('../lib/config');
+                delete require.cache[name];
+                process.env['EMTAPI_CHECK'] = true;
+                bus = require('../lib/emtmad-bus-promise');
+            });
+            after(function () {
+                var name = require.resolve('../lib/emtmad-bus-promise');
+                delete require.cache[name];
+                name = require.resolve('../lib/config');
+                delete require.cache[name];
+                process.env['EMTAPI_CHECK'] = check;
+                bus = require('../lib/emtmad-bus-promise');
+            });
+            it('should return a non empty array', function () {
+                return bus.getIncomingBusesToStop(69).should.eventually.have.length.greaterThan(0);
+            });
+            it('should return a non empty array (cached)', function () {
+                return bus.getIncomingBusesToStop(69).should.eventually.have.length.greaterThan(0);
+            });
+            it('should return an empty array', async function () {
+                // This is ugly and there may be other cases
+                var day = await bus.getIncomingBusesToStop(5376);
+                var night = await bus.getIncomingBusesToStop(3729);
+                var b = (day.length == 0 && night.length > 0) || (day.length > 0 && night.length == 0);
+                b.should.be.true;
+            });
+            it('should be rejected if non existent', function () {
+                return bus.getIncomingBusesToStop(9999999).should.eventually.be.rejectedWith(Error);
+            });
+            it('should return Error if stop is invalid', function () {
+                return bus.getIncomingBusesToStop('a').should.eventually.be.rejectedWith(Error);
+            });
         });
-        it('should return an empty array', async function () {
-            // This is ugly and there may be other cases
-            var day = await bus.getIncomingBusesToStop(5376);
-            var night = await bus.getIncomingBusesToStop(3729);
-            var b = (day.length == 0 && night.length > 0) || (day.length > 0 && night.length == 0);
-            b.should.be.true;
-        });
-        it('should return empty if non existent', function () {
-            return bus.getIncomingBusesToStop(9999999).should.eventually.have.lengthOf(0);
-        });
-        it('should return Error if stop is invalid', function () {
-            return bus.getIncomingBusesToStop('a').should.eventually.be.rejectedWith(Error);
+        describe('Without stop existance checking', () => {
+            var check = Boolean(process.env['EMTAPI_CHECK']);
+            before(function () {
+                var name = require.resolve('../lib/emtmad-bus-promise');
+                delete require.cache[name];
+                name = require.resolve('../lib/config');
+                delete require.cache[name];
+                process.env['EMTAPI_CHECK'] = false;
+                bus = require('../lib/emtmad-bus-promise');
+            });
+            after(function () {
+                var name = require.resolve('../lib/emtmad-bus-promise');
+                delete require.cache[name];
+                name = require.resolve('../lib/config');
+                delete require.cache[name];
+                process.env['EMTAPI_CHECK'] = check;
+                bus = require('../lib/emtmad-bus-promise');
+            });
+            it('should return a non empty array', function () {
+                return bus.getIncomingBusesToStop(69).should.eventually.have.length.greaterThan(0);
+            });
+            it('should be rejected if non existent', function () {
+                return bus.getIncomingBusesToStop(9999999).should.eventually.be.rejectedWith(Error);
+            });
+            it('should return Error if stop is invalid', function () {
+                return bus.getIncomingBusesToStop('a').should.eventually.be.rejectedWith(Error);
+            });
         });
     });
     describe('getStopsFromLocation', function () {
@@ -103,6 +153,26 @@ describe('emtmad-bus-promise', function () {
                 .then(function () {
                     return bus.getStopsLine(21);
                 }).should.eventually.have.property('label', '21');
+        });
+    });
+    describe('getNodesLines', () => {
+        it('should return the details of one stop - Integer', () => {
+            return bus.getNodesLines(69).should.eventually.have.lengthOf(1);
+        });
+        it('should return the details of one stop - Array', () => {
+            return bus.getNodesLines([69]).should.eventually.have.lengthOf(1);
+        });
+        it('should return the details of several stops', () => {
+            return bus.getNodesLines([69, 3729]).should.eventually.have.lengthOf(2);
+        });
+        it('should throw an error (non array and non integer)', () => {
+            (() => { bus.getNodesLines('a'); }).should.Throw();
+        });
+        it('should throw an error (-number)', () => {
+            (() => { bus.getNodesLines(-1); }).should.Throw();
+        });
+        it('should be rejected with wrong stop ID', () => {
+            return bus.getNodesLines(99999).should.eventually.be.rejectedWith(Error);
         });
     });
 });
