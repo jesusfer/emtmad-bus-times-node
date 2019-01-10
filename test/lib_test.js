@@ -9,7 +9,6 @@ var bus;
 var TIMEOUT = _.get(process.env, 'TEST_TIMEOUT', 10000);
 var EMT_ID_CLIENT = process.env.EMT_APP_ID;
 var EMT_PASSKEY = process.env.EMT_PASSKEY;
-
 describe('API authentication errors', function () {
     this.timeout(TIMEOUT);
     
@@ -24,13 +23,15 @@ describe('API authentication errors', function () {
         process.env['EMT_PASSKEY'] = EMT_PASSKEY;
         var name = require.resolve('../lib/emtmad-bus-promise');
         delete require.cache[name];
+        name = require.resolve('../lib/config');
+        delete require.cache[name];
         bus = require('../lib/emtmad-bus-promise');
     });
 
     describe('missing keys', function () {
         it('should return an Error', function () {
             return bus.getIncomingBusesToStop(1).should.eventually.be.rejectedWith(Error);
-        })
+        });
     });
 });
 
@@ -85,16 +86,16 @@ describe('emtmad-bus-promise', function () {
             return bus.getStopsLine(21).should.eventually.have.property('label', '21');
         });
         it('should return the details of the requested line and direction', function () {
-            return bus.getStopsLine(21, "1").should.eventually.have.property('label', '21');
+            return bus.getStopsLine(21, '1').should.eventually.have.property('label', '21');
         });
         it('should return Error if non existent', function () {
             return bus.getStopsLine(1000).should.eventually.be.rejectedWith(Error);
         });
         it('should return Error if non existent (with direction)', function () {
-            return bus.getStopsLine(1000, "1").should.eventually.be.rejectedWith(Error);
+            return bus.getStopsLine(1000, '1').should.eventually.be.rejectedWith(Error);
         });
         it('should return Error when wrong direction ', function () {
-            return bus.getStopsLine(21, "3").should.eventually.be.rejectedWith(Error);
+            return bus.getStopsLine(21, '3').should.eventually.be.rejectedWith(Error);
         });
         it('should return a cached response', function () {
             // This is just for coverage reports. The returned value doesn't include cache info.

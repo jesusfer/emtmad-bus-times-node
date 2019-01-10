@@ -2,7 +2,7 @@
 
 module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-mocha-test');
-    grunt.loadNpmTasks('grunt-mocha-istanbul')
+    grunt.loadNpmTasks('grunt-mocha-istanbul');
 
     // Project configuration.
     grunt.initConfig({
@@ -15,7 +15,7 @@ module.exports = function (grunt) {
                     quiet: false,
                     timeout: 15000
                 },
-                src: ["test/**/*_test.js"]
+                src: ['test/**/*_test.js']
             }
         },
         mocha_istanbul: {
